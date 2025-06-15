@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 import glob
-import re
+import os
 
 st.title("서울 지하철 역 이용객수 지도")
 
@@ -11,31 +11,15 @@ if not files:
   st.error("병합할 데이터가 없습니다.")
   st.stop()
 
-parsing = re.compile(r"(\d{8})")
-date_to_file = {}
-dates = []
-for file in files:
-  match = parsing.search(file)
-  if match:
-    date_str = match.group(1)
-    date_to_file[date_str] = file
-    dates.append(date_str)
+dates = [os.path.splitext(os.path.basename(f))[0] for f in files]
 dates = sorted(dates)
 
 date_display = [f"{d[:4]} / {d[4:6]} / {d[6:]}" for d in dates]
-date_display_to_raw = dict(zip(date_display, dates))
-
 selected_display = st.selectbox("날짜를 선택하세요", date_display)
-selected_date = date_display_to_raw[selected_display]
-selected_file = date_to_file[selected_date]
+selected_date = dates[date_display.index(selected_display)]
+selected_file = f"./data/merged/{selected_date}.parquet"
 
 df = pd.read_parquet(selected_file)
-df = df.rename(columns={'LAT': 'lat', 'LOT': 'lon'})
-
-df['lat'] = pd.to_numeric(df['lat'], errors='coerce')
-df['lon'] = pd.to_numeric(df['lon'], errors='coerce')
-df['TOTAL'] = df['GTON_TNOPE'].fillna(0) + df['GTOFF_TNOPE'].fillna(0)
-df = df.dropna(subset=['lat', 'lon'])
 
 value_option = st.radio(
   "지도에 표시할 값 선택",
