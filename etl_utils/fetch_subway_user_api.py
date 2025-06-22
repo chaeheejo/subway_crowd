@@ -19,4 +19,8 @@ def fetch_subway_user_api(api_key: str, date: str, parquet_path: str):
 
   output_path = Path(parquet_path)
   output_path.parent.mkdir(parents=True, exist_ok=True)
-  df.to_parquet(f"{parquet_path}/{date}_user.parquet", index=False)
+
+  file_path = parquet_path + f"{date}_user.parquet"
+  df.to_parquet(file_path, index=False)
+
+  return file_path

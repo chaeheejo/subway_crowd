@@ -18,4 +18,5 @@ def merge_dataset(user_parquet_path: str, loc_parquet_path: str, date: str, outp
 
   output_path = Path(output_parquet_path)
   output_path.parent.mkdir(parents=True, exist_ok=True)
-  merged_df.to_parquet(f"{output_parquet_path}/{date}.parquet", index=False)
+  
+  merged_df.to_parquet(output_parquet_path+f"{date}.parquet", index=False)

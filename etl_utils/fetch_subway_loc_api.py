@@ -19,4 +19,8 @@ def fetch_subway_loc_api(api_key: str, date: str, parquet_path: str):
 
   output_path = Path(parquet_path)
   output_path.parent.mkdir(parents=True, exist_ok=True)
-  df.to_parquet(f"{parquet_path}/{date}_station.parquet", index=False)
+
+  file_path = parquet_path + f"{date}_loc.parquet"
+  df.to_parquet(file_path, index=False)
+
+  return file_path
